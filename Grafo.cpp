@@ -68,86 +68,171 @@ void Grafo<T,E>::agregarArista(const E& arista)
 template<typename T, typename E>
 void Grafo<T,E>::DFS(const std::string& inicio) const
 {
+    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+        throw std::out_of_range("Nodo inicial no encontrado");
+    }
+
     std::vector<bool> visitado(nodos.size(), false);
     std::stack<int> stack;
     int inicioIndex = nodoIndices.at(inicio);
+
+    std::cout << "Recorrido DFS comenzando desde " << inicio << ":\n";
+
+    // Comenzar con el nodo inicial
     stack.push(inicioIndex);
 
-    while (!stack.empty())
-    {
+    while (!stack.empty()) {
         int nodoActual = stack.top();
         stack.pop();
 
-        if (!visitado[nodoActual])
-        {
+        if (!visitado[nodoActual]) {
+            // Marcar como visitado y mostrar
             visitado[nodoActual] = true;
-            std::cout << nodos[nodoActual].getNombre() << " " << std::endl;
+            std::cout << nodos[nodoActual].getNombre();
 
-            for (size_t i = 0; i < matrizAdyacencia.size(); ++i)
-            {
-                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i])
-                {
+            // Verificar si hay más nodos por visitar
+            bool tieneVecinos = false;
+            for (int i = matrizAdyacencia[nodoActual].size() - 1; i >= 0; --i) {
+                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i]) {
                     stack.push(i);
+                    tieneVecinos = true;
                 }
+            }
+
+            // Agregar una flecha si hay más nodos por visitar
+            if (!stack.empty() && tieneVecinos) {
+                std::cout << " -> ";
+            } else {
+                std::cout << std::endl;
             }
         }
     }
+    std::cout << "\nFin del recorrido DFS" << std::endl;
 }
 
 template<typename T, typename E>
 void Grafo<T,E>::BFS(const std::string& inicio) const
 {
+    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+        throw std::out_of_range("Nodo inicial no encontrado");
+    }
+
     std::vector<bool> visitado(nodos.size(), false);
-    std::queue<int> queue;
+    std::queue<int> cola;
     int inicioIndex = nodoIndices.at(inicio);
-    queue.push(inicioIndex);
 
-    while (!queue.empty())
-    {
-        int nodoActual = queue.front();
-        queue.pop();
+    std::cout << "Recorrido BFS comenzando desde " << inicio << ":\n";
 
-        if (!visitado[nodoActual])
-        {
-            visitado[nodoActual] = true;
-            std::cout << nodos[nodoActual].getNombre() << " " << std::endl;
+    // Comenzar con el nodo inicial
+    cola.push(inicioIndex);
+    visitado[inicioIndex] = true;  // Marcamos como visitado al agregar a la cola
 
-            for (size_t i = 0; i < matrizAdyacencia.size(); ++i)
-            {
-                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i])
-                {
-                    queue.push(i);
-                }
+    while (!cola.empty()) {
+        int nodoActual = cola.front();
+        cola.pop();
+
+        // Mostrar el nodo actual
+        std::cout << nodos[nodoActual].getNombre();
+
+        // Contador para vecinos no visitados
+        int vecinosNoVisitados = 0;
+
+        // Agregar todos los vecinos no visitados a la cola
+        for (size_t i = 0; i < matrizAdyacencia[nodoActual].size(); ++i) {
+            if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i]) {
+                cola.push(i);
+                visitado[i] = true;  // Marcamos como visitado al agregar a la cola
+                vecinosNoVisitados++;
             }
         }
+
+        // Agregar una flecha si hay más nodos por visitar
+        if (!cola.empty() && vecinosNoVisitados > 0) {
+            std::cout << " -> ";
+        } else {
+            std::cout << std::endl;
+        }
     }
+    std::cout << "\nFin del recorrido BFS" << std::endl;
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::dijkstra(const std::string& inicio) const
-{
-    int inicioIndex = nodoIndices.at(inicio);
-    std::vector<int> distancias(nodos.size(), std::numeric_limits<int>::max());
-    distancias[inicioIndex] = 0;
+void Grafo<T, E>::dijkstra(const std::string& inicio) const {
+    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+        throw std::out_of_range("Nodo inicial no encontrado");
+    }
 
-    for (int i = 0; i < nodos.size(); ++i)
-    {
-        for (int u = 0; u < nodos.size(); ++u)
-        {
-            for (int v = 0; v < nodos.size(); ++v)
-            {
-                if (matrizAdyacencia[u][v] != std::numeric_limits<int>::max() && distancias[u] != std::numeric_limits<int>::max() && distancias[u] + matrizAdyacencia[u][v] < distancias[v])
-                {
-                    distancias[v] = distancias[u] + matrizAdyacencia[u][v];
+    int inicioIndex = nodoIndices.at(inicio);
+    int V = nodos.size();
+
+    // Vector de distancias y vector para almacenar el camino
+    std::vector<int> distancias(V, std::numeric_limits<int>::max());
+    std::vector<int> previo(V, -1);
+    std::vector<bool> visitado(V, false);
+
+    // Cola de prioridad para mantener los nodos por explorar
+    // pair<distancia, nodoIndex>
+    std::priority_queue<std::pair<int, int>,
+                       std::vector<std::pair<int, int>>,
+                       std::greater<std::pair<int, int>>> pq;
+
+    // Inicializar distancia del nodo inicial
+    distancias[inicioIndex] = 0;
+    pq.push({0, inicioIndex});
+
+    std::cout << "\nCalculando distancias mínimas desde " << inicio << ":\n";
+    std::cout << "----------------------------------------\n";
+
+    while (!pq.empty()) {
+        int u = pq.top().second;
+        pq.pop();
+
+        if (visitado[u]) continue;
+        visitado[u] = true;
+
+        // Explorar todos los vecinos del nodo actual
+        for (int v = 0; v < V; v++) {
+            // Si hay una arista y no ha sido visitado
+            if (matrizAdyacencia[u][v] != std::numeric_limits<int>::max()) {
+                int peso = matrizAdyacencia[u][v];
+
+                // Si encontramos un camino más corto
+                if (distancias[u] != std::numeric_limits<int>::max() &&
+                    distancias[u] + peso < distancias[v]) {
+                    distancias[v] = distancias[u] + peso;
+                    previo[v] = u;
+                    pq.push({distancias[v], v});
                 }
             }
         }
     }
 
-    for (size_t i = 0; i < distancias.size(); ++i)
-    {
-        std::cout << nodos[i].getNombre() << ": " << distancias[i] << "\n";
+    // Mostrar resultados
+    for (int i = 0; i < V; i++) {
+        std::cout << "Distancia a " << nodos[i].getNombre() << ": ";
+        if (distancias[i] == std::numeric_limits<int>::max()) {
+            std::cout << "INF";
+        } else {
+            std::cout << distancias[i];
+
+            // Mostrar el camino
+            std::cout << " | Camino: ";
+            std::vector<int> camino;
+            int actual = i;
+            while (actual != -1) {
+                camino.push_back(actual);
+                actual = previo[actual];
+            }
+
+            // Imprimir el camino en orden correcto
+            for (int j = camino.size() - 1; j >= 0; j--) {
+                std::cout << nodos[camino[j]].getNombre();
+                if (j > 0) std::cout << " -> ";
+            }
+        }
+        std::cout << std::endl;
     }
+    std::cout << "----------------------------------------\n";
 }
 
 template<typename T, typename E>

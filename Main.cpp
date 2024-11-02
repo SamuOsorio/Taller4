@@ -25,20 +25,20 @@ int main() {
         std::getline(std::cin, nodoInicial);
 
         // Realizar búsqueda DFS
-        std::cout << "\nBúsqueda en profundidad (DFS) desde el nodo " << nodoInicial << ":" << std::endl;
-        grafo.DFS(nodoInicial);
+        //std::cout << "\nBúsqueda en profundidad (DFS) desde el nodo " << nodoInicial << ":" << std::endl;
+        //grafo.DFS(nodoInicial);
 
         // Realizar búsqueda BFS
-        std::cout << "\nBúsqueda en amplitud (BFS) desde el nodo " << nodoInicial << ":" << std::endl;
-        grafo.BFS(nodoInicial);
+        //std::cout << "\nBúsqueda en amplitud (BFS) desde el nodo " << nodoInicial << ":" << std::endl;
+        //grafo.BFS(nodoInicial);
 
         // Ejecutar Dijkstra
         std::cout << "\nResultados de Dijkstra desde el nodo " << nodoInicial << ":" << std::endl;
         grafo.dijkstra(nodoInicial);
 
         // Ejecutar Floyd-Warshall
-        std::cout << "\nResultados de Floyd-Warshall:" << std::endl;
-        grafo.floydWarshall();
+       //std::cout << "\nResultados de Floyd-Warshall:" << std::endl;
+        //grafo.floydWarshall();
 
     } catch (const std::ifstream::failure& e) {
         std::cerr << "Error al abrir o leer los archivos: " << e.what() << std::endl;
