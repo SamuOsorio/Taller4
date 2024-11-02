@@ -23,7 +23,7 @@ private:
     std::unordered_map<std::string, int> nodoIndices;
     std::vector<T> nodos;
     std::vector<E> aristas;
-    std::vector<std::vector<E>> matrizAdyacencia;
+    std::vector<std::vector<int>> matrizAdyacencia;
 
 public:
     Grafo();
@@ -39,7 +39,7 @@ public:
     void floydWarshall();
 
 
-    const std::vector<std::vector<E>>& obtenerMatrizAdyacencia();
+    const std::vector<std::vector<int>>& obtenerMatrizAdyacencia();
     void planoGrafo();
 
     void generarGrafo(const std::string& pathNodos, const std::string& pathAristas);

@@ -2,35 +2,54 @@
 #include "Grafo.h"
 #include "Relacion.h"
 #include "Personaje.h"
-
+#include <string>
 
 int main() {
-    Grafo<Personaje, Relacion> grafo;  // Reemplaza 'Nodo' y 'Arista' con los nombres reales de tus clases.
+    try {
+        Grafo<Personaje, Relacion> grafo;
 
-    // Cargar grafo desde archivos CSV
-    std::string pathNodos = "Nodes.csv";  // Cambia la ruta si es necesario
-    std::string pathAristas = "book1.csv";  // Cambia la ruta si es necesario
-    grafo.generarGrafo(pathNodos, pathAristas);
+        // Cargar grafo desde archivos CSV
+        std::string pathNodos = "Nodes.csv";
+        std::string pathAristas = "book1.csv";
 
-    // Mostrar nodos
-    std::cout << "Nodos en el grafo:" << std::endl;
-    grafo.planoGrafo();
+        std::cout << "Cargando archivos..." << std::endl;
+        grafo.generarGrafo(pathNodos, pathAristas);
 
-    // Realizar búsqueda DFS desde un nodo inicial, por ejemplo "A"
-    std::cout << "\nBúsqueda en profundidad (DFS) desde el nodo A:" << std::endl;
-    grafo.DFS("A");
+        // Mostrar nodos disponibles
+        std::cout << "\nNodos disponibles en el grafo:" << std::endl;
+        grafo.planoGrafo();
 
-    // Realizar búsqueda BFS desde el mismo nodo
-    std::cout << "\nBúsqueda en amplitud (BFS) desde el nodo A:" << std::endl;
-    grafo.BFS("A");
+        // Solicitar nodo inicial
+        std::string nodoInicial;
+        std::cout << "\nIngrese el nombre de un nodo de la lista anterior para comenzar el análisis: ";
+        std::getline(std::cin, nodoInicial);
 
-    // Ejecutar Dijkstra desde el nodo A
-    std::cout << "\nResultados de Dijkstra desde el nodo A:" << std::endl;
-    grafo.dijkstra("A");
+        // Realizar búsqueda DFS
+        std::cout << "\nBúsqueda en profundidad (DFS) desde el nodo " << nodoInicial << ":" << std::endl;
+        grafo.DFS(nodoInicial);
 
-    // Ejecutar Floyd-Warshall
-    std::cout << "\nResultados de Floyd-Warshall:" << std::endl;
-    grafo.floydWarshall();
+        // Realizar búsqueda BFS
+        std::cout << "\nBúsqueda en amplitud (BFS) desde el nodo " << nodoInicial << ":" << std::endl;
+        grafo.BFS(nodoInicial);
+
+        // Ejecutar Dijkstra
+        std::cout << "\nResultados de Dijkstra desde el nodo " << nodoInicial << ":" << std::endl;
+        grafo.dijkstra(nodoInicial);
+
+        // Ejecutar Floyd-Warshall
+        std::cout << "\nResultados de Floyd-Warshall:" << std::endl;
+        grafo.floydWarshall();
+
+    } catch (const std::ifstream::failure& e) {
+        std::cerr << "Error al abrir o leer los archivos: " << e.what() << std::endl;
+        return 1;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Error: Nodo no encontrado en el grafo. Por favor, elija un nodo válido de la lista mostrada." << std::endl;
+        return 1;
+    } catch (const std::exception& e) {
+        std::cerr << "Error inesperado: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
