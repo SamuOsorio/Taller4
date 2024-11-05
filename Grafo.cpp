@@ -90,7 +90,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
             visitado[nodoActual] = true;
             std::cout << nodos[nodoActual].getNombre();
 
-            // Verificar si hay m·s nodos por visitar
+            // Verificar si hay m√°s nodos por visitar
             bool tieneVecinos = false;
             for (int i = matrizAdyacencia[nodoActual].size() - 1; i >= 0; --i) {
                 if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i]) {
@@ -99,7 +99,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
                 }
             }
 
-            // Agregar una flecha si hay m·s nodos por visitar
+            // Agregar una flecha si hay m√°s nodos por visitar
             if (!stack.empty() && tieneVecinos) {
                 std::cout << " -> ";
             } else {
@@ -146,7 +146,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
             }
         }
 
-        // Agregar una flecha si hay m·s nodos por visitar
+        // Agregar una flecha si hay m√°s nodos por visitar
         if (!cola.empty() && vecinosNoVisitados > 0) {
             std::cout << " -> ";
         } else {
@@ -180,7 +180,7 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
     distancias[inicioIndex] = 0;
     pq.push({0, inicioIndex});
 
-    std::cout << "\nCalculando distancias mÌnimas desde " << inicio << ":\n";
+    std::cout << "\nCalculando distancias m√≠nimas desde " << inicio << ":\n";
     std::cout << "----------------------------------------\n";
 
     while (!pq.empty()) {
@@ -196,7 +196,7 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
             if (matrizAdyacencia[u][v] != std::numeric_limits<int>::max()) {
                 int peso = matrizAdyacencia[u][v];
 
-                // Si encontramos un camino m·s corto
+                // Si encontramos un camino m√°s corto
                 if (distancias[u] != std::numeric_limits<int>::max() &&
                     distancias[u] + peso < distancias[v]) {
                     distancias[v] = distancias[u] + peso;
@@ -236,39 +236,59 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::floydWarshall()
-{
+void Grafo<T, E>::floydWarshall() {
+    int V = nodos.size();
     std::vector<std::vector<int>> dist = matrizAdyacencia;
 
-    for (int k = 0; k < nodos.size(); ++k)
-    {
-        for (int i = 0; i < nodos.size(); ++i)
-        {
-            for (int j = 0; j < nodos.size(); ++j)
-            {
-                if (dist[i][k] != std::numeric_limits<int>::max() && dist[k][j] != std::numeric_limits<int>::max())
-                {
-                    dist[i][j] = std::min(dist[i][j], dist[i][k] + dist[k][j]);
+    // Algoritmo de Floyd-Warshall
+    for (int k = 0; k < V; ++k) {
+        for (int i = 0; i < V; ++i) {
+            for (int j = 0; j < V; ++j) {
+                if (dist[i][k] != std::numeric_limits<int>::max() &&
+                    dist[k][j] != std::numeric_limits<int>::max()) {
+                    long long suma = static_cast<long long>(dist[i][k]) + dist[k][j];
+                    if (suma < std::numeric_limits<int>::max()) {
+                        dist[i][j] = std::min(dist[i][j], static_cast<int>(suma));
+                    }
                 }
             }
         }
     }
 
-    for (int i = 0; i < nodos.size(); ++i)
-    {
-        for (int j = 0; j < nodos.size(); ++j)
-        {
-            if (dist[i][j] == std::numeric_limits<int>::max())
-            {
-                std::cout << "INF ";
-            }
-            else
-            {
-                std::cout << dist[i][j] << " ";
+    // Calcular el ancho m√°ximo necesario para los nombres
+    size_t maxNombreLen = 0;
+    for (const auto& nodo : nodos) {
+        maxNombreLen = std::max(maxNombreLen, nodo.getNombre().length());
+    }
+    maxNombreLen = std::max(maxNombreLen, size_t(4)); // M√≠nimo 4 caracteres
+
+    // Imprimir la matriz con formato mejorado
+    std::cout << "\nMatriz de distancias m√≠nimas:\n\n";
+
+    // Imprimir encabezado
+    std::cout << std::string(maxNombreLen + 2, ' ');
+    for (const auto& nodo : nodos) {
+        std::cout << std::left << std::setw(6) << nodo.getNombre().substr(0, 5);
+    }
+    std::cout << '\n';
+
+    // Imprimir l√≠nea separadora
+    std::cout << std::string(maxNombreLen + 2, ' ');
+    std::cout << std::string(nodos.size() * 6, '-') << '\n';
+
+    // Imprimir la matriz
+    for (int i = 0; i < V; ++i) {
+        std::cout << std::left << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
+        for (int j = 0; j < V; ++j) {
+            if (dist[i][j] == std::numeric_limits<int>::max()) {
+                std::cout << std::right << std::setw(6) << "‚àû";
+            } else {
+                std::cout << std::right << std::setw(6) << dist[i][j];
             }
         }
-        std::cout << "\n";
+        std::cout << '\n';
     }
+    std::cout << "\nLeyenda: ‚àû = No hay camino directo entre los nodos\n";
 }
 
 template<typename T, typename E>
@@ -297,10 +317,10 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
     std::cout << "Leyendo archivo de nodos..." << std::endl;
 
-    // Saltar la primera lÌnea (cabecera) del archivo de nodos
+    // Saltar la primera l√≠nea (cabecera) del archivo de nodos
     std::getline(fileNodos, linea);
 
-    // Procesar el resto de las lÌneas
+    // Procesar el resto de las l√≠neas
     while (std::getline(fileNodos, linea)) {
         try {
             std::istringstream iss(linea);
@@ -327,14 +347,14 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
             agregarNodo(nombre, T(nombre, edad, altura, popularidad));
         } catch (const std::exception& e) {
-            throw std::runtime_error("Error procesando nodo en lÌnea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando nodo en l√≠nea: " + linea + ": " + e.what());
         }
     }
     fileNodos.close();
 
     std::cout << "Leyendo archivo de aristas..." << std::endl;
 
-    // Saltar la primera lÌnea (cabecera) del archivo de aristas
+    // Saltar la primera l√≠nea (cabecera) del archivo de aristas
     std::getline(fileAristas, linea);
 
     while (std::getline(fileAristas, linea)) {
@@ -366,7 +386,7 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
             agregarArista(E(source, target, tipo, peso, libro));
         } catch (const std::exception& e) {
-            throw std::runtime_error("Error procesando arista en lÌnea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando arista en l√≠nea: " + linea + ": " + e.what());
         }
     }
     fileAristas.close();
