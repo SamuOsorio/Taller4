@@ -1,4 +1,5 @@
 #include "Grafo.h"
+#include "Comando.h"
 
 template<typename T, typename E>
 Grafo<T,E>::Grafo() {}
@@ -68,7 +69,8 @@ void Grafo<T,E>::agregarArista(const E& arista)
 template<typename T, typename E>
 void Grafo<T,E>::DFS(const std::string& inicio) const
 {
-    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+    if (nodoIndices.find(inicio) == nodoIndices.end())
+    {
         throw std::out_of_range("Nodo inicial no encontrado");
     }
 
@@ -81,28 +83,35 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
     // Comenzar con el nodo inicial
     stack.push(inicioIndex);
 
-    while (!stack.empty()) {
+    while (!stack.empty())
+    {
         int nodoActual = stack.top();
         stack.pop();
 
-        if (!visitado[nodoActual]) {
-            // Marcar como visitado y mostrar
+        if (!visitado[nodoActual])
+        {
+            // Marcar como visitado y
             visitado[nodoActual] = true;
             std::cout << nodos[nodoActual].getNombre();
 
             // Verificar si hay más nodos por visitar
             bool tieneVecinos = false;
-            for (int i = matrizAdyacencia[nodoActual].size() - 1; i >= 0; --i) {
-                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i]) {
+            for (int i = matrizAdyacencia[nodoActual].size() - 1; i >= 0; --i)
+            {
+                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i])
+                {
                     stack.push(i);
                     tieneVecinos = true;
                 }
             }
 
             // Agregar una flecha si hay más nodos por visitar
-            if (!stack.empty() && tieneVecinos) {
+            if (!stack.empty() && tieneVecinos)
+            {
                 std::cout << " -> ";
-            } else {
+            }
+            else
+            {
                 std::cout << std::endl;
             }
         }
@@ -113,7 +122,8 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
 template<typename T, typename E>
 void Grafo<T,E>::BFS(const std::string& inicio) const
 {
-    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+    if (nodoIndices.find(inicio) == nodoIndices.end())
+    {
         throw std::out_of_range("Nodo inicial no encontrado");
     }
 
@@ -127,7 +137,8 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
     cola.push(inicioIndex);
     visitado[inicioIndex] = true;  // Marcamos como visitado al agregar a la cola
 
-    while (!cola.empty()) {
+    while (!cola.empty())
+    {
         int nodoActual = cola.front();
         cola.pop();
 
@@ -138,8 +149,10 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         int vecinosNoVisitados = 0;
 
         // Agregar todos los vecinos no visitados a la cola
-        for (size_t i = 0; i < matrizAdyacencia[nodoActual].size(); ++i) {
-            if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i]) {
+        for (size_t i = 0; i < matrizAdyacencia[nodoActual].size(); ++i)
+        {
+            if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i])
+            {
                 cola.push(i);
                 visitado[i] = true;  // Marcamos como visitado al agregar a la cola
                 vecinosNoVisitados++;
@@ -147,9 +160,12 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         }
 
         // Agregar una flecha si hay más nodos por visitar
-        if (!cola.empty() && vecinosNoVisitados > 0) {
+        if (!cola.empty() && vecinosNoVisitados > 0)
+        {
             std::cout << " -> ";
-        } else {
+        }
+        else
+        {
             std::cout << std::endl;
         }
     }
@@ -157,8 +173,10 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::dijkstra(const std::string& inicio) const {
-    if (nodoIndices.find(inicio) == nodoIndices.end()) {
+void Grafo<T, E>::dijkstra(const std::string& inicio) const
+{
+    if (nodoIndices.find(inicio) == nodoIndices.end())
+    {
         throw std::out_of_range("Nodo inicial no encontrado");
     }
 
@@ -173,8 +191,8 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
     // Cola de prioridad para mantener los nodos por explorar
     // pair<distancia, nodoIndex>
     std::priority_queue<std::pair<int, int>,
-                       std::vector<std::pair<int, int>>,
-                       std::greater<std::pair<int, int>>> pq;
+        std::vector<std::pair<int, int>>,
+        std::greater<std::pair<int, int>>> pq;
 
     // Inicializar distancia del nodo inicial
     distancias[inicioIndex] = 0;
@@ -183,7 +201,8 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
     std::cout << "\nCalculando distancias mínimas desde " << inicio << ":\n";
     std::cout << "----------------------------------------\n";
 
-    while (!pq.empty()) {
+    while (!pq.empty())
+    {
         int u = pq.top().second;
         pq.pop();
 
@@ -191,14 +210,17 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
         visitado[u] = true;
 
         // Explorar todos los vecinos del nodo actual
-        for (int v = 0; v < V; v++) {
+        for (int v = 0; v < V; v++)
+        {
             // Si hay una arista y no ha sido visitado
-            if (matrizAdyacencia[u][v] != std::numeric_limits<int>::max()) {
+            if (matrizAdyacencia[u][v] != std::numeric_limits<int>::max())
+            {
                 int peso = matrizAdyacencia[u][v];
 
                 // Si encontramos un camino más corto
                 if (distancias[u] != std::numeric_limits<int>::max() &&
-                    distancias[u] + peso < distancias[v]) {
+                        distancias[u] + peso < distancias[v])
+                {
                     distancias[v] = distancias[u] + peso;
                     previo[v] = u;
                     pq.push({distancias[v], v});
@@ -208,24 +230,30 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
     }
 
     // Mostrar resultados
-    for (int i = 0; i < V; i++) {
+    for (int i = 0; i < V; i++)
+    {
         std::cout << "Distancia a " << nodos[i].getNombre() << ": ";
-        if (distancias[i] == std::numeric_limits<int>::max()) {
+        if (distancias[i] == std::numeric_limits<int>::max())
+        {
             std::cout << "INF";
-        } else {
+        }
+        else
+        {
             std::cout << distancias[i];
 
             // Mostrar el camino
             std::cout << " | Camino: ";
             std::vector<int> camino;
             int actual = i;
-            while (actual != -1) {
+            while (actual != -1)
+            {
                 camino.push_back(actual);
                 actual = previo[actual];
             }
 
             // Imprimir el camino en orden correcto
-            for (int j = camino.size() - 1; j >= 0; j--) {
+            for (int j = camino.size() - 1; j >= 0; j--)
+            {
                 std::cout << nodos[camino[j]].getNombre();
                 if (j > 0) std::cout << " -> ";
             }
@@ -236,18 +264,24 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const {
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::floydWarshall() {
+void Grafo<T, E>::floydWarshall()
+{
     int V = nodos.size();
     std::vector<std::vector<int>> dist = matrizAdyacencia;
 
     // Algoritmo de Floyd-Warshall
-    for (int k = 0; k < V; ++k) {
-        for (int i = 0; i < V; ++i) {
-            for (int j = 0; j < V; ++j) {
+    for (int k = 0; k < V; ++k)
+    {
+        for (int i = 0; i < V; ++i)
+        {
+            for (int j = 0; j < V; ++j)
+            {
                 if (dist[i][k] != std::numeric_limits<int>::max() &&
-                    dist[k][j] != std::numeric_limits<int>::max()) {
+                        dist[k][j] != std::numeric_limits<int>::max())
+                {
                     long long suma = static_cast<long long>(dist[i][k]) + dist[k][j];
-                    if (suma < std::numeric_limits<int>::max()) {
+                    if (suma < std::numeric_limits<int>::max())
+                    {
                         dist[i][j] = std::min(dist[i][j], static_cast<int>(suma));
                     }
                 }
@@ -257,7 +291,8 @@ void Grafo<T, E>::floydWarshall() {
 
     // Calcular el ancho máximo necesario para los nombres
     size_t maxNombreLen = 0;
-    for (const auto& nodo : nodos) {
+    for (const auto& nodo : nodos)
+    {
         maxNombreLen = std::max(maxNombreLen, nodo.getNombre().length());
     }
     maxNombreLen = std::max(maxNombreLen, size_t(4)); // Mínimo 4 caracteres
@@ -267,7 +302,8 @@ void Grafo<T, E>::floydWarshall() {
 
     // Imprimir encabezado
     std::cout << std::string(maxNombreLen + 2, ' ');
-    for (const auto& nodo : nodos) {
+    for (const auto& nodo : nodos)
+    {
         std::cout << std::left << std::setw(6) << nodo.getNombre().substr(0, 5);
     }
     std::cout << '\n';
@@ -277,12 +313,17 @@ void Grafo<T, E>::floydWarshall() {
     std::cout << std::string(nodos.size() * 6, '-') << '\n';
 
     // Imprimir la matriz
-    for (int i = 0; i < V; ++i) {
+    for (int i = 0; i < V; ++i)
+    {
         std::cout << std::left << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
-        for (int j = 0; j < V; ++j) {
-            if (dist[i][j] == std::numeric_limits<int>::max()) {
+        for (int j = 0; j < V; ++j)
+        {
+            if (dist[i][j] == std::numeric_limits<int>::max())
+            {
                 std::cout << std::right << std::setw(6) << "∞";
-            } else {
+            }
+            else
+            {
                 std::cout << std::right << std::setw(6) << dist[i][j];
             }
         }
@@ -292,10 +333,12 @@ void Grafo<T, E>::floydWarshall() {
 }
 
 template<typename T, typename E>
-void Grafo<T,E>::planoGrafo() {
+void Grafo<T,E>::planoGrafo()
+{
     std::cout << "Lista de nodos disponibles:" << std::endl;
     std::cout << "-------------------------" << std::endl;
-    for (const auto& nodo : nodos) {
+    for (const auto& nodo : nodos)
+    {
         std::cout << "Nombre: " << nodo.getNombre()
                   << " | Edad: " << nodo.getEdad()
                   << " | Altura: " << nodo.getAltura()
@@ -306,12 +349,14 @@ void Grafo<T,E>::planoGrafo() {
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& pathAristas) {
+void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& pathAristas)
+{
     std::ifstream fileNodos(pathNodos);
     std::ifstream fileAristas(pathAristas);
     std::string linea;
 
-    if (!fileNodos.is_open() || !fileAristas.is_open()) {
+    if (!fileNodos.is_open() || !fileAristas.is_open())
+    {
         throw std::runtime_error("Error al abrir el/los archivos: " + pathNodos + " " + pathAristas);
     }
 
@@ -321,8 +366,10 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
     std::getline(fileNodos, linea);
 
     // Procesar el resto de las líneas
-    while (std::getline(fileNodos, linea)) {
-        try {
+    while (std::getline(fileNodos, linea))
+    {
+        try
+        {
             std::istringstream iss(linea);
             std::string nombre, edadStr, alturaStr, popularidadStr;
 
@@ -346,7 +393,9 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
             int popularidad = std::stoi(popularidadStr);
 
             agregarNodo(nombre, T(nombre, edad, altura, popularidad));
-        } catch (const std::exception& e) {
+        }
+        catch (const std::exception& e)
+        {
             throw std::runtime_error("Error procesando nodo en línea: " + linea + ": " + e.what());
         }
     }
@@ -357,8 +406,10 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
     // Saltar la primera línea (cabecera) del archivo de aristas
     std::getline(fileAristas, linea);
 
-    while (std::getline(fileAristas, linea)) {
-        try {
+    while (std::getline(fileAristas, linea))
+    {
+        try
+        {
             std::istringstream iss(linea);
             std::string source, target, type, pesoStr, libroStr;
 
@@ -385,7 +436,9 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
             int libro = std::stoi(libroStr);
 
             agregarArista(E(source, target, tipo, peso, libro));
-        } catch (const std::exception& e) {
+        }
+        catch (const std::exception& e)
+        {
             throw std::runtime_error("Error procesando arista en línea: " + linea + ": " + e.what());
         }
     }
@@ -396,6 +449,148 @@ template<typename T, typename E>
 const std::vector<std::vector<int>>& Grafo<T,E> ::obtenerMatrizAdyacencia()
 {
     return matrizAdyacencia;
+}
+
+template<typename T, typename E>
+void Grafo<T, E>::cargarComandos(const std::string& nombreArchivo)
+{
+    std::ifstream archivo(nombreArchivo);
+    if (!archivo.is_open())
+    {
+        std::cerr << "No se pudo abrir el archivo de comandos: " << nombreArchivo << std::endl;
+        return;
+    }
+
+    std::string linea;
+    while (std::getline(archivo, linea))
+    {
+        std::istringstream iss(linea);
+        std::string nombre, parametros, descripcion;
+
+        if (std::getline(iss, nombre, '|') &&
+                std::getline(iss, parametros, '|') &&
+                std::getline(iss, descripcion, '|'))
+        {
+            Comando comando(nombre, parametros, descripcion);
+
+            comandos.push_back(comando);
+        }
+    }
+
+    archivo.close();
+}
+
+// Método para procesar comando -- Procesa un comando introducido por consolo por el usuario
+template<typename T, typename E>
+void Grafo<T, E>::procesarComando(const std::string& comando)
+{
+    std::istringstream iss(comando);
+    std::string nombre;
+    iss >> nombre;
+
+    if (nombre == "ayuda")
+    {
+        mostrarAyuda();
+    }
+    else if (nombre == "generarGrafo")
+    {
+        std::string nombreArchivo;
+        std::string nombreArchivo2;
+        if (iss >> nombreArchivo >> nombreArchivo2)
+        {
+            generarGrafo(nombreArchivo, nombreArchivo2);
+        }
+        else
+        {
+            std::cerr << "\nError: Falta el nombre del archivo para cargar.\n" << std::endl;
+        }
+    }
+    else if (nombre == "DFS")
+    {
+        std::string inicio;
+        if (iss >> inicio)
+        {
+            DFS(inicio);
+        }
+        else
+        {
+            std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
+        }
+    }
+    else if (nombre == "BFS")
+    {
+        std::string inicio;
+        if (iss >> inicio)
+        {
+            BFS(inicio);
+        }
+        else
+        {
+            std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
+        }
+    }
+    else if (nombre == "plano")
+    {
+        planoGrafo();
+    }
+    else if (nombre == "guardar")
+    {
+        std::string inicio;
+        if (iss >> inicio)
+        {
+            dijkstra(inicio);
+        }
+        else
+        {
+            std::cerr << "\nError: Falta el inicio para hacer el algoritmo.\n" << std::endl;
+        }
+    }
+    else if(nombre=="clear")
+    {
+        borrarPantalla();
+    }
+    else
+    {
+        std::cout << "\nComando no reconocido: " << comando << "\n" << std::endl;
+    }
+}
+
+// Método para mostrar ayuda de los comandos -- Muestra lista de comandos disponibles y su descripción
+template<typename T, typename E>
+void Grafo<T, E>::mostrarAyuda()
+{
+    std::cout << std::left
+              << std::setw(20) << "\nComando"
+              << std::setw(35) << "Parametros"
+              << "Descripcion" << std::endl;
+    std::cout << std::string(120, '-') << std::endl;
+
+    for (const auto& comando : comandos)
+    {
+        std::cout << std::left
+                  << std::setw(20) << comando.getNombre()
+                  << std::setw(35) << comando.getParametros()
+                  << comando.getDescripcion() << std::endl;
+    }
+}
+
+// Método para listar comandos -- Lista los nombres de los comandos disponibles
+template<typename T, typename E>
+void Grafo<T, E>::listarComandos()
+{
+    std::cout << "\nLista de comandos disponibles: \n" << std::endl;
+    for (const auto& comando : comandos)
+    {
+        std::cout << comando.getNombre() << std::endl;
+    }
+}
+
+// Método para borrar pantalla
+template<typename T, typename E>
+void Grafo<T, E>::borrarPantalla()
+{
+
+    system("cls");
 }
 
 template class Grafo<Personaje, Relacion>;

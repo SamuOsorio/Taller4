@@ -5,6 +5,28 @@
 #include <string>
 
 int main() {
+
+    Grafo<Personaje, Relacion> grafo;
+    grafo.cargarComandos("comandos.txt");
+    grafo.listarComandos();
+    while (true)
+    {
+        std::cout<<std::endl;
+		// Lee el comando ingresado en consola
+        std::string comando;
+        std::cout << "\n$ ";
+        std::getline(std::cin, comando);
+        if (comando == "salir")
+        {
+            break;
+        }
+        // Procesa el comando del usuario
+        grafo.procesarComando(comando);
+    }
+
+    return 0;
+}
+    /*
     try {
         Grafo<Personaje, Relacion> grafo;
 
@@ -53,3 +75,4 @@ int main() {
 
     return 0;
 }
+*/

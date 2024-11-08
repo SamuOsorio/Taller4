@@ -15,6 +15,7 @@
 
 #include "Personaje.h"
 #include "Relacion.h"
+#include "Comando.h"
 
 
 template<typename T, typename E>
@@ -25,6 +26,7 @@ private:
     std::vector<T> nodos;
     std::vector<E> aristas;
     std::vector<std::vector<int>> matrizAdyacencia;
+    std::vector<Comando> comandos;
 
 public:
     Grafo();
@@ -42,6 +44,12 @@ public:
 
     const std::vector<std::vector<int>>& obtenerMatrizAdyacencia();
     void planoGrafo();
+
+    void mostrarAyuda();
+    void borrarPantalla();
+    void procesarComando(const std::string& comando);
+    void cargarComandos(const std::string& nombreArchivo);
+    void listarComandos();
 
     void generarGrafo(const std::string& pathNodos, const std::string& pathAristas);
 };

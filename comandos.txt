@@ -1,0 +1,8 @@
+1. generarGrafo|<archivoNodo> <archivoRelaciones>|Genera un grafo a partir de los archivos <archivoNodo> <archivoRelaciones>
+2. DFS|<inicio>|Realiza el recorrido DFS del grafo dado un punto de inicio.
+3. BFS|<inicio>|Realiza el recorrido BFS del grafo dado un punto de inicio.
+4. plano||Realiza el recorrido plano del grafo.
+5. Dijkstra|<inicio>|Realiza el algoritmo de Dijkstra dado un punto de inicio.
+6. ayuda||Mostrar ayuda de los comandos.
+7. clear||Borra Pantalla
+8. salir||Termina la ejecucion de la aplicacion.
