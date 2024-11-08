@@ -79,6 +79,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
     int inicioIndex = nodoIndices.at(inicio);
 
     std::cout << "Recorrido DFS comenzando desde " << inicio << ":\n";
+    std::cout << std::string(40, '-') << std::endl;
 
     // Comenzar con el nodo inicial
     stack.push(inicioIndex);
@@ -92,7 +93,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
         {
             // Marcar como visitado y
             visitado[nodoActual] = true;
-            std::cout << nodos[nodoActual].getNombre();
+            std::cout << "- " << std::setw(20) << std::left << nodos[nodoActual].getNombre() << std::endl;
 
             // Verificar si hay más nodos por visitar
             bool tieneVecinos = false;
@@ -104,6 +105,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
                     tieneVecinos = true;
                 }
             }
+            /*
 
             // Agregar una flecha si hay más nodos por visitar
             if (!stack.empty() && tieneVecinos)
@@ -114,6 +116,7 @@ void Grafo<T,E>::DFS(const std::string& inicio) const
             {
                 std::cout << std::endl;
             }
+            */
         }
     }
     std::cout << "\nFin del recorrido DFS" << std::endl;
@@ -132,6 +135,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
     int inicioIndex = nodoIndices.at(inicio);
 
     std::cout << "Recorrido BFS comenzando desde " << inicio << ":\n";
+    std::cout << std::string(40, '-') << std::endl;
 
     // Comenzar con el nodo inicial
     cola.push(inicioIndex);
@@ -143,7 +147,9 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         cola.pop();
 
         // Mostrar el nodo actual
-        std::cout << nodos[nodoActual].getNombre();
+        std::cout << "- " << std::setw(20) << std::left << nodos[nodoActual].getNombre() << std::endl;
+
+
 
         // Contador para vecinos no visitados
         int vecinosNoVisitados = 0;
@@ -158,6 +164,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
                 vecinosNoVisitados++;
             }
         }
+        /*
 
         // Agregar una flecha si hay más nodos por visitar
         if (!cola.empty() && vecinosNoVisitados > 0)
@@ -168,6 +175,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         {
             std::cout << std::endl;
         }
+        */
     }
     std::cout << "\nFin del recorrido BFS" << std::endl;
 }
@@ -198,8 +206,9 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const
     distancias[inicioIndex] = 0;
     pq.push({0, inicioIndex});
 
-    std::cout << "\nCalculando distancias mínimas desde " << inicio << ":\n";
-    std::cout << "----------------------------------------\n";
+    std::cout << "\nDistancias minimas desde el nodo '" << inicio << "':" << std::endl;
+    std::cout << std::string(50, '-') << std::endl;
+    std::cout << std::setw(20) << std::left << "Destino" << std::setw(20) << "Distancia" << "Camino" << std::endl;
 
     while (!pq.empty())
     {
@@ -229,38 +238,21 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const
         }
     }
 
-    // Mostrar resultados
-    for (int i = 0; i < V; i++)
-    {
-        std::cout << "Distancia a " << nodos[i].getNombre() << ": ";
-        if (distancias[i] == std::numeric_limits<int>::max())
-        {
-            std::cout << "INF";
+    for (int i = 0; i < V; i++) {
+        if (distancias[i] == std::numeric_limits<int>::max()) continue;
+        std::cout << std::setw(20) << nodos[i].getNombre() << std::setw(10) << distancias[i];
+
+        // Imprimir camino
+        std::vector<int> camino;
+        for (int actual = i; actual != -1; actual = previo[actual]) {
+            camino.push_back(actual);
         }
-        else
-        {
-            std::cout << distancias[i];
-
-            // Mostrar el camino
-            std::cout << " | Camino: ";
-            std::vector<int> camino;
-            int actual = i;
-            while (actual != -1)
-            {
-                camino.push_back(actual);
-                actual = previo[actual];
-            }
-
-            // Imprimir el camino en orden correcto
-            for (int j = camino.size() - 1; j >= 0; j--)
-            {
-                std::cout << nodos[camino[j]].getNombre();
-                if (j > 0) std::cout << " -> ";
-            }
+        for (int j = camino.size() - 1; j >= 0; j--) {
+            std::cout << nodos[camino[j]].getNombre();
+            if (j > 0) std::cout << " -> ";
         }
         std::cout << std::endl;
     }
-    std::cout << "----------------------------------------\n";
 }
 
 template<typename T, typename E>
@@ -298,33 +290,21 @@ void Grafo<T, E>::floydWarshall()
     maxNombreLen = std::max(maxNombreLen, size_t(4)); // Mínimo 4 caracteres
 
     // Imprimir la matriz con formato mejorado
-    std::cout << "\nMatriz de distancias mínimas:\n\n";
+    std::cout << "\nMatriz de distancias minimas:\n\n";
 
     // Imprimir encabezado
-    std::cout << std::string(maxNombreLen + 2, ' ');
-    for (const auto& nodo : nodos)
-    {
-        std::cout << std::left << std::setw(6) << nodo.getNombre().substr(0, 5);
+     for (const auto& nodo : nodos) {
+        std::cout << std::setw(6) << nodo.getNombre().substr(0, 5);
     }
-    std::cout << '\n';
+    std::cout << '\n' << std::string((maxNombreLen + 2) + nodos.size() * 6, '-') << '\n';
 
-    // Imprimir línea separadora
-    std::cout << std::string(maxNombreLen + 2, ' ');
-    std::cout << std::string(nodos.size() * 6, '-') << '\n';
-
-    // Imprimir la matriz
-    for (int i = 0; i < V; ++i)
-    {
-        std::cout << std::left << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
-        for (int j = 0; j < V; ++j)
-        {
-            if (dist[i][j] == std::numeric_limits<int>::max())
-            {
-                std::cout << std::right << std::setw(6) << "∞";
-            }
-            else
-            {
-                std::cout << std::right << std::setw(6) << dist[i][j];
+    for (int i = 0; i < V; ++i) {
+        std::cout << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
+        for (int j = 0; j < V; ++j) {
+            if (dist[i][j] == std::numeric_limits<int>::max()) {
+                std::cout << std::setw(6) << "∞";
+            } else {
+                std::cout << std::setw(6) << dist[i][j];
             }
         }
         std::cout << '\n';
@@ -528,6 +508,22 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
         {
             std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
         }
+    }
+    else if (nombre == "Dijkstra")
+    {
+        std::string inicio;
+        if (iss >> inicio)
+        {
+            dijkstra(inicio);
+        }
+        else
+        {
+            std::cerr << "\nError: Falta el inicio para hacer el algoritmo.\n" << std::endl;
+        }
+    }
+    else if (nombre == "Floyd-Warshall")
+    {
+        floydWarshall();
     }
     else if (nombre == "plano")
     {
