@@ -1,6 +1,0 @@
-1. generarGrafo|<archivoNodo> <archivoRelaciones>|Genera un grafo a partir de los archivos <archivoNodo> <archivoRelaciones>
-2. MejorCamino|<inicio>|Busca los mejores caminos para un personaje
-3. encontrarTriangulo||Encuentra triángulos de confianza en el grafo
-4. ayuda||Mostrar ayuda de los comandos.
-5. clear||Borra Pantalla
-6. salir||Termina la ejecucion de la aplicacion.
