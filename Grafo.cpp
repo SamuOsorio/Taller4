@@ -76,7 +76,7 @@ void Grafo<T, E>::DFS(int nodo, std::vector<int>& camino, std::vector<bool>& vis
         int b = camino[1];
         int c = camino[2];
 
-        // Verifica que todas las relaciones entre los nodos en el triángulo tengan peso > 4
+        // Verifica que todas las relaciones entre los nodos en el tri�ngulo tengan peso > 4
         if (matrizAdyacencia[a][b] > 4 && matrizAdyacencia[b][c] > 4 && matrizAdyacencia[c][a] > 4) {
             int popA = nodos[a].getPopularidad();
             int popB = nodos[b].getPopularidad();
@@ -85,26 +85,26 @@ void Grafo<T, E>::DFS(int nodo, std::vector<int>& camino, std::vector<bool>& vis
             int edadB = nodos[b].getEdad();
             int edadC = nodos[c].getEdad();
 
-            // Determina el nodo más popular y su edad
+            // Determina el nodo m�s popular y su edad
             int popularidadMax = std::max(popA, std::max(popB, popC));
             int edadReferencia = (popA == popularidadMax) ? edadA : (popB == popularidadMax) ? edadB : edadC;
 
-            // Verifica que los otros dos nodos estén dentro de ±20 años del nodo más popular
+            // Verifica que los otros dos nodos est�n dentro de �20 a�os del nodo m�s popular
             bool edadValida = (std::abs(edadA - edadReferencia) <= 20) &&
                               (std::abs(edadB - edadReferencia) <= 20) &&
                               (std::abs(edadC - edadReferencia) <= 20);
 
             if (edadValida) {
-                // Crear el triángulo como una lista de nombres y ordenarlo alfabéticamente
+                // Crear el tri�ngulo como una lista de nombres y ordenarlo alfab�ticamente
                 std::vector<std::string> nombresTriangulo = {nodos[a].getNombre(), nodos[b].getNombre(), nodos[c].getNombre()};
                 std::sort(nombresTriangulo.begin(), nombresTriangulo.end());
 
                 // Unir los nombres en una cadena para almacenar en el conjunto
                 std::string triangulo = nombresTriangulo[0] + " - " + nombresTriangulo[1] + " - " + nombresTriangulo[2];
 
-                // Almacena el triángulo en el conjunto solo si es único
+                // Almacena el tri�ngulo en el conjunto solo si es �nico
                 if (triangulosUnicos.insert(triangulo).second) { // `insert` retorna `true` si es nuevo
-                    std::cout << "Triángulo de confianza encontrado: " << triangulo << std::endl;
+                    std::cout << "Tri�ngulo de confianza encontrado: " << triangulo << std::endl;
                 }
             }
         }
@@ -163,7 +163,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         }
         /*
 
-        // Agregar una flecha si hay mÃ¡s nodos por visitar
+        // Agregar una flecha si hay más nodos por visitar
         if (!cola.empty() && vecinosNoVisitados > 0)
         {
             std::cout << " -> ";
@@ -223,7 +223,7 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const
             {
                 int peso = matrizAdyacencia[u][v];
 
-                // Si encontramos un camino mÃ¡s corto
+                // Si encontramos un camino más corto
                 if (distancias[u] != std::numeric_limits<int>::max() &&
                         distancias[u] + peso < distancias[v])
                 {
@@ -278,13 +278,13 @@ void Grafo<T, E>::floydWarshall()
         }
     }
 
-    // Calcular el ancho mÃ¡ximo necesario para los nombres
+    // Calcular el ancho máximo necesario para los nombres
     size_t maxNombreLen = 0;
     for (const auto& nodo : nodos)
     {
         maxNombreLen = std::max(maxNombreLen, nodo.getNombre().length());
     }
-    maxNombreLen = std::max(maxNombreLen, size_t(4)); // MÃ­nimo 4 caracteres
+    maxNombreLen = std::max(maxNombreLen, size_t(4)); // Mínimo 4 caracteres
 
     // Imprimir la matriz con formato mejorado
     std::cout << "\nMatriz de distancias minimas:\n\n";
@@ -299,14 +299,14 @@ void Grafo<T, E>::floydWarshall()
         std::cout << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
         for (int j = 0; j < V; ++j) {
             if (dist[i][j] == std::numeric_limits<int>::max()) {
-                std::cout << std::setw(6) << "âˆž";
+                std::cout << std::setw(6) << "∞";
             } else {
                 std::cout << std::setw(6) << dist[i][j];
             }
         }
         std::cout << '\n';
     }
-    std::cout << "\nLeyenda: âˆž = No hay camino directo entre los nodos\n";
+    std::cout << "\nLeyenda: ∞ = No hay camino directo entre los nodos\n";
 }
 
 template<typename T, typename E>
@@ -339,10 +339,10 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
     std::cout << "Leyendo archivo de nodos..." << std::endl;
 
-    // Saltar la primera lÃ­nea (cabecera) del archivo de nodos
+    // Saltar la primera línea (cabecera) del archivo de nodos
     std::getline(fileNodos, linea);
 
-    // Procesar el resto de las lÃ­neas
+    // Procesar el resto de las líneas
     while (std::getline(fileNodos, linea))
     {
         try
@@ -373,14 +373,14 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando nodo en lÃ­nea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando nodo en línea: " + linea + ": " + e.what());
         }
     }
     fileNodos.close();
 
     std::cout << "Leyendo archivo de aristas..." << std::endl;
 
-    // Saltar la primera lÃ­nea (cabecera) del archivo de aristas
+    // Saltar la primera línea (cabecera) del archivo de aristas
     std::getline(fileAristas, linea);
 
     while (std::getline(fileAristas, linea))
@@ -416,7 +416,7 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando arista en lÃ­nea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando arista en línea: " + linea + ": " + e.what());
         }
     }
     fileAristas.close();
@@ -424,7 +424,7 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
 template<typename T, typename E>
 void Grafo<T, E>::encontrarTriangulosDeConfianza() {
-    std::set<std::string> triangulosUnicos; // Almacena los triángulos únicos
+    std::set<std::string> triangulosUnicos; // Almacena los tri�ngulos �nicos
     for (size_t i = 0; i < matrizAdyacencia.size(); ++i) {
         std::vector<int> camino;
         std::vector<bool> visitado(matrizAdyacencia.size(), false);
@@ -467,7 +467,7 @@ void Grafo<T, E>::cargarComandos(const std::string& nombreArchivo)
     archivo.close();
 }
 
-// MÃ©todo para procesar comando -- Procesa un comando introducido por consolo por el usuario
+// Método para procesar comando -- Procesa un comando introducido por consolo por el usuario
 template<typename T, typename E>
 void Grafo<T, E>::procesarComando(const std::string& comando)
 {
@@ -519,7 +519,7 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
     }
 }
 
-// MÃ©todo para mostrar ayuda de los comandos -- Muestra lista de comandos disponibles y su descripciÃ³n
+// Método para mostrar ayuda de los comandos -- Muestra lista de comandos disponibles y su descripción
 template<typename T, typename E>
 void Grafo<T, E>::mostrarAyuda()
 {
@@ -538,7 +538,7 @@ void Grafo<T, E>::mostrarAyuda()
     }
 }
 
-// MÃ©todo para listar comandos -- Lista los nombres de los comandos disponibles
+// Método para listar comandos -- Lista los nombres de los comandos disponibles
 template<typename T, typename E>
 void Grafo<T, E>::listarComandos()
 {
@@ -549,7 +549,7 @@ void Grafo<T, E>::listarComandos()
     }
 }
 
-// MÃ©todo para borrar pantalla
+// Método para borrar pantalla
 template<typename T, typename E>
 void Grafo<T, E>::borrarPantalla()
 {
