@@ -1,0 +1,13 @@
+Source,Target,Type,Weight,Book
+Addam-Marbrand,Aegon-I-Targaryen,Undirected,6,1
+Addam-Marbrand,Aemon-Targaryen,Undirected,3,1
+Aegon-I-Targaryen,Aerys-II-Targaryen,Undirected,10,1
+Aemon-Targaryen,Aerys-II-Targaryen,Undirected,1,1
+Aemon-Targaryen,Addam-Marbrand,Undirected,2,1
+Aerys-II-Targaryen,Addam-Marbrand,Undirected,8,1
+Aegon-I-Targaryen,Aemon-Targaryen,Undirected,7,1
+Alliser-Thorne,Aerys-II-Targaryen,Undirected,5,1
+Aggo,Albett,Undirected,6,1
+Albett,Alyn,Undirected,7,1
+Alliser-Thorne,Addam-Marbrand,Undirected,9,1
+Alyn,Aegon-I-Targaryen,Undirected,5,1

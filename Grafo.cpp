@@ -67,59 +67,56 @@ void Grafo<T,E>::agregarArista(const E& arista)
 
 
 template<typename T, typename E>
-void Grafo<T,E>::DFS(const std::string& inicio) const
-{
-    if (nodoIndices.find(inicio) == nodoIndices.end())
-    {
-        throw std::out_of_range("Nodo inicial no encontrado");
-    }
+void Grafo<T, E>::DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado, std::set<std::string>& triangulosUnicos) const {
+    visitado[nodo] = true;
+    camino.push_back(nodo);
 
-    std::vector<bool> visitado(nodos.size(), false);
-    std::stack<int> stack;
-    int inicioIndex = nodoIndices.at(inicio);
+    if (camino.size() == 3) {
+        int a = camino[0];
+        int b = camino[1];
+        int c = camino[2];
 
-    std::cout << "Recorrido DFS comenzando desde " << inicio << ":\n";
-    std::cout << std::string(40, '-') << std::endl;
+        // Verifica que todas las relaciones entre los nodos en el triángulo tengan peso > 4
+        if (matrizAdyacencia[a][b] > 4 && matrizAdyacencia[b][c] > 4 && matrizAdyacencia[c][a] > 4) {
+            int popA = nodos[a].getPopularidad();
+            int popB = nodos[b].getPopularidad();
+            int popC = nodos[c].getPopularidad();
+            int edadA = nodos[a].getEdad();
+            int edadB = nodos[b].getEdad();
+            int edadC = nodos[c].getEdad();
 
-    // Comenzar con el nodo inicial
-    stack.push(inicioIndex);
+            // Determina el nodo más popular y su edad
+            int popularidadMax = std::max(popA, std::max(popB, popC));
+            int edadReferencia = (popA == popularidadMax) ? edadA : (popB == popularidadMax) ? edadB : edadC;
 
-    while (!stack.empty())
-    {
-        int nodoActual = stack.top();
-        stack.pop();
+            // Verifica que los otros dos nodos estén dentro de ±20 años del nodo más popular
+            bool edadValida = (std::abs(edadA - edadReferencia) <= 20) &&
+                              (std::abs(edadB - edadReferencia) <= 20) &&
+                              (std::abs(edadC - edadReferencia) <= 20);
 
-        if (!visitado[nodoActual])
-        {
-            // Marcar como visitado y
-            visitado[nodoActual] = true;
-            std::cout << "- " << std::setw(20) << std::left << nodos[nodoActual].getNombre() << std::endl;
+            if (edadValida) {
+                // Crear el triángulo como una lista de nombres y ordenarlo alfabéticamente
+                std::vector<std::string> nombresTriangulo = {nodos[a].getNombre(), nodos[b].getNombre(), nodos[c].getNombre()};
+                std::sort(nombresTriangulo.begin(), nombresTriangulo.end());
 
-            // Verificar si hay más nodos por visitar
-            bool tieneVecinos = false;
-            for (int i = matrizAdyacencia[nodoActual].size() - 1; i >= 0; --i)
-            {
-                if (matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max() && !visitado[i])
-                {
-                    stack.push(i);
-                    tieneVecinos = true;
+                // Unir los nombres en una cadena para almacenar en el conjunto
+                std::string triangulo = nombresTriangulo[0] + " - " + nombresTriangulo[1] + " - " + nombresTriangulo[2];
+
+                // Almacena el triángulo en el conjunto solo si es único
+                if (triangulosUnicos.insert(triangulo).second) { // `insert` retorna `true` si es nuevo
+                    std::cout << "Triángulo de confianza encontrado: " << triangulo << std::endl;
                 }
             }
-            /*
-
-            // Agregar una flecha si hay más nodos por visitar
-            if (!stack.empty() && tieneVecinos)
-            {
-                std::cout << " -> ";
+        }
+    } else {
+        for (size_t i = 0; i < matrizAdyacencia.size(); ++i) {
+            if (!visitado[i] && matrizAdyacencia[nodo][i] > 4) {
+                DFS(i, camino, visitado, triangulosUnicos);
             }
-            else
-            {
-                std::cout << std::endl;
-            }
-            */
         }
     }
-    std::cout << "\nFin del recorrido DFS" << std::endl;
+    camino.pop_back();
+    visitado[nodo] = false;
 }
 
 template<typename T, typename E>
@@ -166,7 +163,7 @@ void Grafo<T,E>::BFS(const std::string& inicio) const
         }
         /*
 
-        // Agregar una flecha si hay más nodos por visitar
+        // Agregar una flecha si hay mÃ¡s nodos por visitar
         if (!cola.empty() && vecinosNoVisitados > 0)
         {
             std::cout << " -> ";
@@ -226,7 +223,7 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const
             {
                 int peso = matrizAdyacencia[u][v];
 
-                // Si encontramos un camino más corto
+                // Si encontramos un camino mÃ¡s corto
                 if (distancias[u] != std::numeric_limits<int>::max() &&
                         distancias[u] + peso < distancias[v])
                 {
@@ -281,13 +278,13 @@ void Grafo<T, E>::floydWarshall()
         }
     }
 
-    // Calcular el ancho máximo necesario para los nombres
+    // Calcular el ancho mÃ¡ximo necesario para los nombres
     size_t maxNombreLen = 0;
     for (const auto& nodo : nodos)
     {
         maxNombreLen = std::max(maxNombreLen, nodo.getNombre().length());
     }
-    maxNombreLen = std::max(maxNombreLen, size_t(4)); // Mínimo 4 caracteres
+    maxNombreLen = std::max(maxNombreLen, size_t(4)); // MÃ­nimo 4 caracteres
 
     // Imprimir la matriz con formato mejorado
     std::cout << "\nMatriz de distancias minimas:\n\n";
@@ -302,14 +299,14 @@ void Grafo<T, E>::floydWarshall()
         std::cout << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
         for (int j = 0; j < V; ++j) {
             if (dist[i][j] == std::numeric_limits<int>::max()) {
-                std::cout << std::setw(6) << "∞";
+                std::cout << std::setw(6) << "âˆž";
             } else {
                 std::cout << std::setw(6) << dist[i][j];
             }
         }
         std::cout << '\n';
     }
-    std::cout << "\nLeyenda: ∞ = No hay camino directo entre los nodos\n";
+    std::cout << "\nLeyenda: âˆž = No hay camino directo entre los nodos\n";
 }
 
 template<typename T, typename E>
@@ -342,10 +339,10 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
 
     std::cout << "Leyendo archivo de nodos..." << std::endl;
 
-    // Saltar la primera línea (cabecera) del archivo de nodos
+    // Saltar la primera lÃ­nea (cabecera) del archivo de nodos
     std::getline(fileNodos, linea);
 
-    // Procesar el resto de las líneas
+    // Procesar el resto de las lÃ­neas
     while (std::getline(fileNodos, linea))
     {
         try
@@ -376,14 +373,14 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando nodo en línea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando nodo en lÃ­nea: " + linea + ": " + e.what());
         }
     }
     fileNodos.close();
 
     std::cout << "Leyendo archivo de aristas..." << std::endl;
 
-    // Saltar la primera línea (cabecera) del archivo de aristas
+    // Saltar la primera lÃ­nea (cabecera) del archivo de aristas
     std::getline(fileAristas, linea);
 
     while (std::getline(fileAristas, linea))
@@ -419,10 +416,20 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando arista en línea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando arista en lÃ­nea: " + linea + ": " + e.what());
         }
     }
     fileAristas.close();
+}
+
+template<typename T, typename E>
+void Grafo<T, E>::encontrarTriangulosDeConfianza() {
+    std::set<std::string> triangulosUnicos; // Almacena los triángulos únicos
+    for (size_t i = 0; i < matrizAdyacencia.size(); ++i) {
+        std::vector<int> camino;
+        std::vector<bool> visitado(matrizAdyacencia.size(), false);
+        DFS(i, camino, visitado, triangulosUnicos);
+    }
 }
 
 template<typename T, typename E>
@@ -460,7 +467,7 @@ void Grafo<T, E>::cargarComandos(const std::string& nombreArchivo)
     archivo.close();
 }
 
-// Método para procesar comando -- Procesa un comando introducido por consolo por el usuario
+// MÃ©todo para procesar comando -- Procesa un comando introducido por consolo por el usuario
 template<typename T, typename E>
 void Grafo<T, E>::procesarComando(const std::string& comando)
 {
@@ -485,31 +492,7 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
             std::cerr << "\nError: Falta el nombre del archivo para cargar.\n" << std::endl;
         }
     }
-    else if (nombre == "DFS")
-    {
-        std::string inicio;
-        if (iss >> inicio)
-        {
-            DFS(inicio);
-        }
-        else
-        {
-            std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
-        }
-    }
-    else if (nombre == "BFS")
-    {
-        std::string inicio;
-        if (iss >> inicio)
-        {
-            BFS(inicio);
-        }
-        else
-        {
-            std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
-        }
-    }
-    else if (nombre == "Dijkstra")
+    else if (nombre == "MejorCamino")
     {
         std::string inicio;
         if (iss >> inicio)
@@ -518,29 +501,14 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
         }
         else
         {
-            std::cerr << "\nError: Falta el inicio para hacer el algoritmo.\n" << std::endl;
+            std::cerr << "\nError: Falta el inicio para hacer el recorrido.\n" << std::endl;
         }
     }
-    else if (nombre == "Floyd-Warshall")
+    else if (nombre == "encontrarTriangulo")
     {
-        floydWarshall();
+        encontrarTriangulosDeConfianza();
     }
-    else if (nombre == "plano")
-    {
-        planoGrafo();
-    }
-    else if (nombre == "guardar")
-    {
-        std::string inicio;
-        if (iss >> inicio)
-        {
-            dijkstra(inicio);
-        }
-        else
-        {
-            std::cerr << "\nError: Falta el inicio para hacer el algoritmo.\n" << std::endl;
-        }
-    }
+
     else if(nombre=="clear")
     {
         borrarPantalla();
@@ -551,7 +519,7 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
     }
 }
 
-// Método para mostrar ayuda de los comandos -- Muestra lista de comandos disponibles y su descripción
+// MÃ©todo para mostrar ayuda de los comandos -- Muestra lista de comandos disponibles y su descripciÃ³n
 template<typename T, typename E>
 void Grafo<T, E>::mostrarAyuda()
 {
@@ -570,7 +538,7 @@ void Grafo<T, E>::mostrarAyuda()
     }
 }
 
-// Método para listar comandos -- Lista los nombres de los comandos disponibles
+// MÃ©todo para listar comandos -- Lista los nombres de los comandos disponibles
 template<typename T, typename E>
 void Grafo<T, E>::listarComandos()
 {
@@ -581,7 +549,7 @@ void Grafo<T, E>::listarComandos()
     }
 }
 
-// Método para borrar pantalla
+// MÃ©todo para borrar pantalla
 template<typename T, typename E>
 void Grafo<T, E>::borrarPantalla()
 {

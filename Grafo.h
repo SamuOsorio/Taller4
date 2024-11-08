@@ -12,6 +12,8 @@
 #include <sstream>
 #include <vector>
 #include <iomanip>
+#include <set>
+#include <algorithm>
 
 #include "Personaje.h"
 #include "Relacion.h"
@@ -36,7 +38,9 @@ public:
     void eliminarNodo(const std::string& id);
     void agregarArista(const E& arista);
 
-    void DFS(const std::string& inicio) const;
+    void DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado) const;
+    void DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado, std::set<std::string>& triangulosUnicos) const;
+	void encontrarTriangulosDeConfianza();
     void BFS(const std::string& inicio) const;
     void dijkstra(const std::string& inicio) const;
     void floydWarshall();
