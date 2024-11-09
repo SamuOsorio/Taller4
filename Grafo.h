@@ -38,9 +38,8 @@ public:
     void eliminarNodo(const std::string& id);
     void agregarArista(const E& arista);
 
-    void DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado) const;
-    void DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado, std::set<std::string>& triangulosUnicos) const;
-	void encontrarTriangulosDeConfianza();
+    void DFSTriangulos(int nodoActual, int nodoInicial, std::vector<int>& camino,std::vector<bool>& visitado, std::set<std::set<int>>& triangulos) const;
+	void encontrarTriangulosDFS() const;
     void BFS(const std::string& inicio) const;
     void dijkstra(const std::string& inicio) const;
     void floydWarshall();

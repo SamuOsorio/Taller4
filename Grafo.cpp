@@ -67,57 +67,47 @@ void Grafo<T,E>::agregarArista(const E& arista)
 
 
 template<typename T, typename E>
-void Grafo<T, E>::DFS(int nodo, std::vector<int>& camino, std::vector<bool>& visitado, std::set<std::string>& triangulosUnicos) const {
-    visitado[nodo] = true;
-    camino.push_back(nodo);
+void Grafo<T,E>::DFSTriangulos(int nodoActual, int nodoInicial, std::vector<int>& camino,
+                               std::vector<bool>& visitado, std::set<std::set<int>>& triangulos) const
+{
+    // Agregar nodo actual al camino
+    camino.push_back(nodoActual);
+    visitado[nodoActual] = true;
 
-    if (camino.size() == 3) {
-        int a = camino[0];
-        int b = camino[1];
-        int c = camino[2];
-
-        // Verifica que todas las relaciones entre los nodos en el triángulo tengan peso > 4
-        if (matrizAdyacencia[a][b] > 4 && matrizAdyacencia[b][c] > 4 && matrizAdyacencia[c][a] > 4) {
-            int popA = nodos[a].getPopularidad();
-            int popB = nodos[b].getPopularidad();
-            int popC = nodos[c].getPopularidad();
-            int edadA = nodos[a].getEdad();
-            int edadB = nodos[b].getEdad();
-            int edadC = nodos[c].getEdad();
-
-            // Determina el nodo más popular y su edad
-            int popularidadMax = std::max(popA, std::max(popB, popC));
-            int edadReferencia = (popA == popularidadMax) ? edadA : (popB == popularidadMax) ? edadB : edadC;
-
-            // Verifica que los otros dos nodos estén dentro de ±20 años del nodo más popular
-            bool edadValida = (std::abs(edadA - edadReferencia) <= 20) &&
-                              (std::abs(edadB - edadReferencia) <= 20) &&
-                              (std::abs(edadC - edadReferencia) <= 20);
-
-            if (edadValida) {
-                // Crear el triángulo como una lista de nombres y ordenarlo alfabéticamente
-                std::vector<std::string> nombresTriangulo = {nodos[a].getNombre(), nodos[b].getNombre(), nodos[c].getNombre()};
-                std::sort(nombresTriangulo.begin(), nombresTriangulo.end());
-
-                // Unir los nombres en una cadena para almacenar en el conjunto
-                std::string triangulo = nombresTriangulo[0] + " - " + nombresTriangulo[1] + " - " + nombresTriangulo[2];
-
-                // Almacena el triángulo en el conjunto solo si es único
-                if (triangulosUnicos.insert(triangulo).second) { // `insert` retorna `true` si es nuevo
-                    std::cout << "Triángulo de confianza encontrado: " << triangulo << std::endl;
-                }
-            }
-        }
-    } else {
-        for (size_t i = 0; i < matrizAdyacencia.size(); ++i) {
-            if (!visitado[i] && matrizAdyacencia[nodo][i] > 4) {
-                DFS(i, camino, visitado, triangulosUnicos);
+    // Si encontramos un camino de longitud 3 que forma un triángulo
+    if(camino.size() == 3)
+    {
+        // Verificar si forma un triángulo válido (cierra el ciclo)
+        if(matrizAdyacencia[camino[2]][camino[0]] != std::numeric_limits<int>::max())
+        {
+            // Verificar que todos los pesos sean > 4
+            if(matrizAdyacencia[camino[0]][camino[1]] > 4 &&
+                    matrizAdyacencia[camino[1]][camino[2]] > 4 &&
+                    matrizAdyacencia[camino[2]][camino[0]] > 4)
+            {
+                // Agregar triángulo al conjunto (automáticamente evita duplicados)
+                triangulos.insert(std::set<int>(camino.begin(), camino.end()));
             }
         }
     }
+    else
+    {
+        // Continuar DFS
+        for(int i = 0; i < nodos.size(); i++)
+        {
+            if(!visitado[i] &&
+                    matrizAdyacencia[nodoActual][i] != std::numeric_limits<int>::max())
+            {
+                DFSTriangulos(i, nodoInicial, camino, visitado, triangulos);
+            }
+        }
+    }
+
+    // Backtrack
     camino.pop_back();
-    visitado[nodo] = false;
+    visitado[nodoActual] = false;
 }
+
 
 template<typename T, typename E>
 void Grafo<T,E>::BFS(const std::string& inicio) const
@@ -235,16 +225,19 @@ void Grafo<T, E>::dijkstra(const std::string& inicio) const
         }
     }
 
-    for (int i = 0; i < V; i++) {
+    for (int i = 0; i < V; i++)
+    {
         if (distancias[i] == std::numeric_limits<int>::max()) continue;
         std::cout << std::setw(20) << nodos[i].getNombre() << std::setw(10) << distancias[i];
 
         // Imprimir camino
         std::vector<int> camino;
-        for (int actual = i; actual != -1; actual = previo[actual]) {
+        for (int actual = i; actual != -1; actual = previo[actual])
+        {
             camino.push_back(actual);
         }
-        for (int j = camino.size() - 1; j >= 0; j--) {
+        for (int j = camino.size() - 1; j >= 0; j--)
+        {
             std::cout << nodos[camino[j]].getNombre();
             if (j > 0) std::cout << " -> ";
         }
@@ -290,17 +283,23 @@ void Grafo<T, E>::floydWarshall()
     std::cout << "\nMatriz de distancias minimas:\n\n";
 
     // Imprimir encabezado
-     for (const auto& nodo : nodos) {
+    for (const auto& nodo : nodos)
+    {
         std::cout << std::setw(6) << nodo.getNombre().substr(0, 5);
     }
     std::cout << '\n' << std::string((maxNombreLen + 2) + nodos.size() * 6, '-') << '\n';
 
-    for (int i = 0; i < V; ++i) {
+    for (int i = 0; i < V; ++i)
+    {
         std::cout << std::setw(maxNombreLen + 2) << nodos[i].getNombre();
-        for (int j = 0; j < V; ++j) {
-            if (dist[i][j] == std::numeric_limits<int>::max()) {
+        for (int j = 0; j < V; ++j)
+        {
+            if (dist[i][j] == std::numeric_limits<int>::max())
+            {
                 std::cout << std::setw(6) << "âˆž";
-            } else {
+            }
+            else
+            {
                 std::cout << std::setw(6) << dist[i][j];
             }
         }
@@ -373,7 +372,7 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando nodo en lÃ­nea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando nodo en linea: " + linea + ": " + e.what());
         }
     }
     fileNodos.close();
@@ -416,19 +415,66 @@ void Grafo<T, E>::generarGrafo(const std::string& pathNodos, const std::string& 
         }
         catch (const std::exception& e)
         {
-            throw std::runtime_error("Error procesando arista en lÃ­nea: " + linea + ": " + e.what());
+            throw std::runtime_error("Error procesando arista en linea: " + linea + ": " + e.what());
         }
     }
     fileAristas.close();
 }
 
 template<typename T, typename E>
-void Grafo<T, E>::encontrarTriangulosDeConfianza() {
-    std::set<std::string> triangulosUnicos; // Almacena los triángulos únicos
-    for (size_t i = 0; i < matrizAdyacencia.size(); ++i) {
-        std::vector<int> camino;
-        std::vector<bool> visitado(matrizAdyacencia.size(), false);
-        DFS(i, camino, visitado, triangulosUnicos);
+void Grafo<T,E>::encontrarTriangulosDFS() const {
+    int V = nodos.size();
+    std::vector<bool> visitado(V, false);
+    std::vector<int> camino;
+    std::set<std::set<int>> triangulos; // Para evitar triángulos duplicados
+
+    std::cout << "\nBuscando triángulos y relaciones de confianza usando DFS...\n";
+    std::cout << "------------------------------------------------\n";
+
+    // Iniciar DFS desde cada nodo
+    for(int i = 0; i < V; i++) {
+        std::fill(visitado.begin(), visitado.end(), false);
+        camino.clear();
+        DFSTriangulos(i, i, camino, visitado, triangulos);
+    }
+
+    // Mostrar los triángulos encontrados
+    if (triangulos.empty()) {
+        std::cout << "No se encontraron triángulos que cumplan con los criterios.\n";
+    } else {
+        int contador = 1;
+        for(const auto& triangulo : triangulos) {
+            std::vector<int> vertices(triangulo.begin(), triangulo.end());
+
+            // Obtener el personaje más importante
+            int maxPopularidad = -1;
+            int edadReferencia = 0;
+            for(int v : vertices) {
+                if(nodos[v].getPopularidad() > maxPopularidad) {
+                    maxPopularidad = nodos[v].getPopularidad();
+                    edadReferencia = nodos[v].getEdad();
+                }
+            }
+
+            // Verificar diferencia de edades
+            bool edadesValidas = true;
+            for(int v : vertices) {
+                if(std::abs(nodos[v].getEdad() - edadReferencia) > 20) {
+                    edadesValidas = false;
+                    break;
+                }
+            }
+
+            if(edadesValidas) {
+                std::cout << "\nTriangulo #" << contador++ << ":\n";
+                for(int v : vertices) {
+                    std::cout << "- " << nodos[v].getNombre()
+                             << " (Edad: " << nodos[v].getEdad()
+                             << ", Popularidad: " << nodos[v].getPopularidad() << ")\n";
+                }
+                std::cout << "------------------------------------------------\n";
+            }
+        }
     }
 }
 
@@ -506,7 +552,7 @@ void Grafo<T, E>::procesarComando(const std::string& comando)
     }
     else if (nombre == "encontrarTriangulo")
     {
-        encontrarTriangulosDeConfianza();
+        encontrarTriangulosDFS();
     }
 
     else if(nombre=="clear")
