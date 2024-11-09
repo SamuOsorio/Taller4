@@ -1,10 +1,12 @@
 Source,Target,Type,Weight,Book
-A, B, Undirected, 5, 1
-B, C, Undirected, 6, 1
-C, A, Undirected, 5, 1
-D, E, Undirected, 7, 1
-E, F, Undirected, 8, 1
-F, D, Undirected, 6, 1
-A, D, Undirected, 7, 1
-C, E, Undirected, 6, 1
-G, H, Undirected, 5, 1
+Nodo1,Nodo2,Undirected,6,1 
+Nodo1,Nodo3,Undirected,5,2 
+Nodo2,Nodo3,Undirected,7,1 
+Nodo2,Nodo4,Undirected,8,2
+ Nodo3,Nodo4,Undirected,6,1 
+Nodo4,Nodo5,Undirected,9,2 
+Nodo5,Nodo6,Undirected,7,1 
+Nodo5,Nodo7,Undirected,8,2 
+Nodo6,Nodo7,Undirected,6,1 
+Nodo6,Nodo8,Undirected,5,2 
+Nodo7,Nodo8,Undirected,7,1

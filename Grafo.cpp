@@ -428,7 +428,7 @@ void Grafo<T,E>::encontrarTriangulosDFS() const {
     std::vector<int> camino;
     std::set<std::set<int>> triangulos; // Para evitar triángulos duplicados
 
-    std::cout << "\nBuscando triángulos y relaciones de confianza usando DFS...\n";
+    std::cout << "\nBuscando triangulos y relaciones de confianza usando DFS...\n";
     std::cout << "------------------------------------------------\n";
 
     // Iniciar DFS desde cada nodo
@@ -440,7 +440,7 @@ void Grafo<T,E>::encontrarTriangulosDFS() const {
 
     // Mostrar los triángulos encontrados
     if (triangulos.empty()) {
-        std::cout << "No se encontraron triángulos que cumplan con los criterios.\n";
+        std::cout << "No se encontraron triangulos que cumplan con los criterios.\n";
     } else {
         int contador = 1;
         for(const auto& triangulo : triangulos) {
